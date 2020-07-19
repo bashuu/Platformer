@@ -8,9 +8,9 @@ public class PlayerInput : MonoBehaviour
 {
     private Rigidbody2D rb;
 
-    public float moveSpeed = 5f;
-    public float jumpHeight = 8f;
-    public float fallMult = 0.005f;
+    public float moveSpeed = 6f;
+    public float jumpHeight = 5f;
+    public float fallMult = -2f;
     public float dashDis = 3f;
 
     [SerializeField] public LayerMask platformLayerMask;
@@ -19,6 +19,7 @@ public class PlayerInput : MonoBehaviour
 
     private bool isJumpPressed;
     private bool isDashPressed;
+    private bool isCtrlPressed;
     private int jumpCount;
 
     public Vector2 movement;
@@ -28,19 +29,19 @@ public class PlayerInput : MonoBehaviour
     {
         rb = this.GetComponent<Rigidbody2D>();
         Physics2D.queriesStartInColliders = false;
-    }
+    }   
 
     private void Update()
     {
         changeDir(lastMoveDir);
+
         handleMovementInput();
 
-        isJumpPressed = Input.GetKeyDown(KeyCode.Space);
     }
 
     private void FixedUpdate()
     {
-
+        handleWalljump();
         handleJump();
         handleDash(lastMoveDir);
 
@@ -54,12 +55,23 @@ public class PlayerInput : MonoBehaviour
 
     bool onWall()
     {
-        return transform.Find("WallCheck").GetComponent<WallCheck>().onWall;
+        if (transform.Find("WallCheck").GetComponent<WallCheck>().onWall && !isGrounded())
+        {
+            return true;
+        }
+        return false;
     }
 
     void dash(float distance)
     {
         transform.position += new Vector3(lastMoveDir, 0, 0) * distance;
+    }
+
+    void jump()
+    {
+        rb.velocity = Vector2.up * jumpHeight;
+        jumpCount--;
+        
     }
 
     private void handleMovementInput()
@@ -84,32 +96,49 @@ public class PlayerInput : MonoBehaviour
             }
         }
 
-        isJumpPressed = Input.GetKeyDown(KeyCode.Space);
+        if (!isGrounded())
+        {
+            isJumpPressed = Input.GetKeyDown(KeyCode.Space);
+        }
+        else
+            isJumpPressed = Input.GetKey(KeyCode.Space);
+
         isDashPressed = Input.GetKeyDown(KeyCode.LeftShift);
+        isCtrlPressed = Input.GetKey(KeyCode.LeftControl);
     }
 
     private void handleJump()
     {
-        if(isGrounded())
-            isJumpPressed = Input.GetKey(KeyCode.Space);
-        else
-            isJumpPressed = Input.GetKeyDown(KeyCode.Space);
+
         if(isGrounded())
             jumpCount = MaxAirJump;
-
         if (isJumpPressed && jumpCount > 0)
         {
-            rb.velocity = Vector2.up * jumpHeight;
-            jumpCount--;
+            jump();
         }
-
         /*if (rb.velocity.y < 0)
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMult - 1) * Time.deltaTime;
         }
         */
     }
-    
+    private void handleWalljump()
+    {
+
+        if(onWall() && isCtrlPressed)
+        {
+            rb.constraints = RigidbodyConstraints2D.FreezePosition;
+            if (isJumpPressed)
+            {
+                rb.constraints = RigidbodyConstraints2D.None;
+                jump();
+            }
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints2D.None;
+        }
+    }
     private void handleDash(int dir)
     {
         
