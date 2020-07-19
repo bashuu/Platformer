@@ -34,6 +34,7 @@ public class PlayerInput : MonoBehaviour
     {
         changeDir(lastMoveDir);
         handleMovementInput();
+
         isJumpPressed = Input.GetKeyDown(KeyCode.Space);
 
         if (canMove(lastMoveDir, dashDis))
@@ -44,9 +45,6 @@ public class PlayerInput : MonoBehaviour
 
     private void FixedUpdate()
     {
-
-        if (onWall())
-            movement.x = 0;
 
         handleJump();
         handleDash();
