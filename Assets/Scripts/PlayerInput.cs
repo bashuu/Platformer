@@ -36,18 +36,13 @@ public class PlayerInput : MonoBehaviour
         handleMovementInput();
 
         isJumpPressed = Input.GetKeyDown(KeyCode.Space);
-
-        if (canMove(lastMoveDir, dashDis))
-            Debug.Log("CanDash");
-        else
-            Debug.Log("noDash");
     }
 
     private void FixedUpdate()
     {
 
         handleJump();
-        handleDash();
+        handleDash(lastMoveDir);
 
         rb.velocity = movement * moveSpeed + new Vector2(0.0f, rb.velocity.y);
     }
@@ -114,29 +109,21 @@ public class PlayerInput : MonoBehaviour
         }
         */
     }
-
-    private bool canMove(int dir, float distance)
-    {
-        return Physics2D.Raycast(transform.position, new Vector3(dir, 0), distance, platformLayerMask).collider == null;
-    }
     
-    private void handleDash()
+    private void handleDash(int dir)
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(lastMoveDir, 0), platformLayerMask);
-
+        
         if (isDashPressed)
         {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(dir, 0), dashDis, platformLayerMask);
             if (hit.collider != null)
             {
-                if (hit.distance >= dashDis)
-                {
-                    dash(dashDis);
-                }
-                else
-                {
-                    dash(Mathf.Abs(transform.position.x - hit.transform.position.x) - 1);
-                }
-            }
+                float distance = Mathf.Abs(hit.point.x - transform.position.x);
+                dash(distance - 0.2f);
+                return;
+            }            
+            dash(dashDis);
+
         }
 
     }
