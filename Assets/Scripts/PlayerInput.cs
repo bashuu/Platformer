@@ -32,14 +32,20 @@ public class PlayerInput : MonoBehaviour
         changeDir(lastMoveDir);
         handleMovementInput();
         isJumpPressed = Input.GetKeyDown(KeyCode.Space);
+        
     }
 
     private void FixedUpdate()
     {
         if (isDashPressed)
             dash();
-        rb.velocity = movement * moveSpeed + new Vector2(0.0f, rb.velocity.y);
+
+        if (onWall())
+            movement.x = 0;
+
         handleJump();
+
+        rb.velocity = movement * moveSpeed + new Vector2(0.0f, rb.velocity.y);
     }
 
     private void handleMovementInput()
@@ -95,10 +101,14 @@ public class PlayerInput : MonoBehaviour
         return transform.Find("GroundCheck").GetComponent<GroundCheck>().isGrounded;
     }
 
+    bool onWall()
+    {
+        return transform.Find("WallCheck").GetComponent<WallCheck>().onWall;
+    }
+
     void dash()
     {
-        
-        transform.position += new Vector3(movement.x, 0, 0) * dashLen;
+        transform.position += new Vector3(lastMoveDir, 0, 0) * dashLen;
     }
     private void changeDir(int lastMoveDir)
     {
