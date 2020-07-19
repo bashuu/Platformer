@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
@@ -10,8 +11,9 @@ public class PlayerInput : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpHeight = 8f;
     public float fallMult = 0.005f;
-    public float dashLen = 3f;
-    
+    public float dashDis = 3f;
+
+    [SerializeField] public LayerMask platformLayerMask;
 
     private const int MaxAirJump = 3;
 
@@ -25,6 +27,7 @@ public class PlayerInput : MonoBehaviour
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody2D>();
+        Physics2D.queriesStartInColliders = false;
     }
 
     private void Update()
@@ -32,20 +35,38 @@ public class PlayerInput : MonoBehaviour
         changeDir(lastMoveDir);
         handleMovementInput();
         isJumpPressed = Input.GetKeyDown(KeyCode.Space);
-        
+
+        if (canMove(lastMoveDir, dashDis))
+            Debug.Log("CanDash");
+        else
+            Debug.Log("noDash");
     }
 
     private void FixedUpdate()
     {
-        if (isDashPressed)
-            dash();
 
         if (onWall())
             movement.x = 0;
 
         handleJump();
+        handleDash();
 
         rb.velocity = movement * moveSpeed + new Vector2(0.0f, rb.velocity.y);
+    }
+
+    bool isGrounded()
+    {
+        return transform.Find("GroundCheck").GetComponent<GroundCheck>().isGrounded;
+    }
+
+    bool onWall()
+    {
+        return transform.Find("WallCheck").GetComponent<WallCheck>().onWall;
+    }
+
+    void dash(float distance)
+    {
+        transform.position += new Vector3(lastMoveDir, 0, 0) * distance;
     }
 
     private void handleMovementInput()
@@ -96,21 +117,33 @@ public class PlayerInput : MonoBehaviour
         */
     }
 
-    bool isGrounded()
+    private bool canMove(int dir, float distance)
     {
-        return transform.Find("GroundCheck").GetComponent<GroundCheck>().isGrounded;
+        return Physics2D.Raycast(transform.position, new Vector3(dir, 0), distance, platformLayerMask).collider == null;
+    }
+    
+    private void handleDash()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(lastMoveDir, 0), platformLayerMask);
+
+        if (isDashPressed)
+        {
+            if (hit.collider != null)
+            {
+                if (hit.distance >= dashDis)
+                {
+                    dash(dashDis);
+                }
+                else
+                {
+                    dash(Mathf.Abs(transform.position.x - hit.transform.position.x) - 1);
+                }
+            }
+        }
+
     }
 
-    bool onWall()
-    {
-        return transform.Find("WallCheck").GetComponent<WallCheck>().onWall;
-    }
-
-    void dash()
-    {
-        transform.position += new Vector3(lastMoveDir, 0, 0) * dashLen;
-    }
-    private void changeDir(int lastMoveDir)
+    void changeDir(int lastMoveDir)
     {
         if (lastMoveDir == -1)
         {
@@ -121,4 +154,6 @@ public class PlayerInput : MonoBehaviour
             transform.localRotation = Quaternion.Euler(0, 0, 0);
         }
     }
+
+
 }

@@ -130,6 +130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 426667252}
   - component: {fileID: 426667253}
+  - component: {fileID: 426667254}
   m_Layer: 0
   m_Name: WallCheck
   m_TagString: Untagged
@@ -177,6 +178,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.6, y: 0.48}
   m_EdgeRadius: 0
+--- !u!114 &426667254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426667251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a8ca33bad4e34f438546df2bffad42f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onWall: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +407,7 @@ GameObject:
   - component: {fileID: 739051711}
   - component: {fileID: 739051710}
   - component: {fileID: 739051709}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Platfrom
   m_TagString: Platfrom
   m_Icon: {fileID: 0}
@@ -522,7 +536,7 @@ GameObject:
   - component: {fileID: 893873089}
   - component: {fileID: 893873088}
   - component: {fileID: 893873087}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Platfrom (5)
   m_TagString: Platfrom
   m_Icon: {fileID: 0}
@@ -787,7 +801,10 @@ MonoBehaviour:
   moveSpeed: 5
   jumpHeight: 15
   fallMult: -2
-  dashLen: 2.5
+  dashDis: 3
+  platformLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
   movement: {x: 0, y: 0}
 --- !u!1 &1398286856
 GameObject:
@@ -801,7 +818,7 @@ GameObject:
   - component: {fileID: 1398286860}
   - component: {fileID: 1398286859}
   - component: {fileID: 1398286858}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Platfrom (3)
   m_TagString: Platfrom
   m_Icon: {fileID: 0}
@@ -816,7 +833,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1398286856}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 2.29, y: 5.5, z: 1.5791668}
+  m_LocalPosition: {x: 2.29, y: 5.32, z: 1.5791668}
   m_LocalScale: {x: 10, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1460864667}
@@ -835,7 +852,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.00089053065, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -846,7 +863,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.4517777}
+  m_Size: {x: 0.49821895, y: 0.4517777}
   m_EdgeRadius: 0
 --- !u!50 &1398286859
 Rigidbody2D:
@@ -966,7 +983,7 @@ GameObject:
   - component: {fileID: 1621910919}
   - component: {fileID: 1621910918}
   - component: {fileID: 1621910917}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Platfrom (4)
   m_TagString: Platfrom
   m_Icon: {fileID: 0}
@@ -1095,7 +1112,7 @@ GameObject:
   - component: {fileID: 1822999035}
   - component: {fileID: 1822999034}
   - component: {fileID: 1822999033}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Platfrom (2)
   m_TagString: Platfrom
   m_Icon: {fileID: 0}
@@ -1304,7 +1321,7 @@ GameObject:
   - component: {fileID: 1946050953}
   - component: {fileID: 1946050952}
   - component: {fileID: 1946050951}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Platfrom (1)
   m_TagString: Platfrom
   m_Icon: {fileID: 0}
