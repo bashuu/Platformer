@@ -13,6 +13,7 @@ public class PlayerInput : MonoBehaviour
     private bool isDashPressed;
     private bool isCtrlPressed;
     private int jumpCount;
+    int lastMoveDir = 1;
     [SerializeField] 
     private PlayerData playerData;
     public LayerMask platformLayerMask;
@@ -26,7 +27,7 @@ public class PlayerInput : MonoBehaviour
 
     private void Update()
     {
-        changeDir(playerData.lastMoveDir);
+        changeDir(lastMoveDir);
 
         handleMovementInput();
 
@@ -36,7 +37,7 @@ public class PlayerInput : MonoBehaviour
     {
         handleWalljump();
         handleJump();
-        handleDash(playerData.lastMoveDir);
+        handleDash(lastMoveDir);
 
         rb.velocity = movement * playerData.moveSpeed + new Vector2(0.0f, rb.velocity.y);
     }
@@ -57,7 +58,7 @@ public class PlayerInput : MonoBehaviour
 
     void dash(float distance)
     {
-        transform.position += new Vector3(playerData.lastMoveDir, 0, 0) * distance;
+        transform.position += new Vector3(lastMoveDir, 0, 0) * distance;
     }
 
     void jump()
@@ -72,14 +73,14 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             movement.x = -1;
-            playerData.lastMoveDir = -1;
+            lastMoveDir = -1;
         }
         else
         {
             if (Input.GetKey(KeyCode.D))
             {
                 movement.x = 1;
-                playerData.lastMoveDir = 1;
+                lastMoveDir = 1;
             }
             else
             {
@@ -97,7 +98,11 @@ public class PlayerInput : MonoBehaviour
             isJumpPressed = Input.GetKey(KeyCode.Space);
 
         isDashPressed = Input.GetKeyDown(KeyCode.LeftShift);
+
+
         isCtrlPressed = Input.GetKey(KeyCode.LeftControl);
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+            isCtrlPressed = false;
     }
 
     private void handleJump()
@@ -113,18 +118,25 @@ public class PlayerInput : MonoBehaviour
     private void handleWalljump()
     {
 
-        if(onWall() && isCtrlPressed)
+        if(onWall())
         {
-            rb.constraints = RigidbodyConstraints2D.FreezePosition;
-            if (isJumpPressed)
+            bool facingWall = Physics2D.Raycast(transform.position, new Vector2(lastMoveDir, 0), 1f, platformLayerMask).collider;
+            if (facingWall)
+                movement.x = 0;
+            if (isCtrlPressed)
+            {
+                rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
+                if (isJumpPressed && !facingWall && movement.x != 0)
+                {
+                    rb.constraints = RigidbodyConstraints2D.None;
+                    jump();
+                }
+            }
+            else
             {
                 rb.constraints = RigidbodyConstraints2D.None;
-                jump();
             }
-        }
-        else
-        {
-            rb.constraints = RigidbodyConstraints2D.None;
         }
     }
     private void handleDash(int dir)
