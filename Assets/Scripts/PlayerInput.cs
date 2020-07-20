@@ -38,6 +38,7 @@ public class PlayerInput : MonoBehaviour
         handleWalljump();
         handleJump();
         handleDash(lastMoveDir);
+        Debug.Log(facingWall());
 
         rb.velocity = movement * playerData.moveSpeed + new Vector2(0.0f, rb.velocity.y);
     }
@@ -56,6 +57,17 @@ public class PlayerInput : MonoBehaviour
         return false;
     }
 
+    bool facingWall()
+    {
+        if(Physics2D.Raycast(transform.position, new Vector2(lastMoveDir, 0), 0.3f, platformLayerMask))
+        {
+            if(!isGrounded())
+                movement.x = 0;
+            return true;
+        }
+        return false;
+    }
+
     void dash(float distance)
     {
         transform.position += new Vector3(lastMoveDir, 0, 0) * distance;
@@ -65,7 +77,12 @@ public class PlayerInput : MonoBehaviour
     {
         rb.velocity = Vector2.up * playerData.jumpHeight;
         jumpCount--;
-        
+    }
+
+    void wallJump()
+    {
+
+        rb.velocity = new Vector2(lastMoveDir * playerData.moveSpeed, 1 * playerData.jumpHeight);
     }
 
     private void handleMovementInput()
@@ -112,31 +129,35 @@ public class PlayerInput : MonoBehaviour
             jumpCount = playerData.MaxAirJump;
         if (isJumpPressed && jumpCount > 0)
         {
-            jump();
+            if(!onWall())
+                jump();
         }
     }
     private void handleWalljump()
     {
 
-        if(onWall())
+        if (isCtrlPressed)
         {
-            bool facingWall = Physics2D.Raycast(transform.position, new Vector2(lastMoveDir, 0), 1f, platformLayerMask).collider;
-            if (facingWall)
-                movement.x = 0;
-            if (isCtrlPressed)
+            if (onWall())
             {
                 rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
-                if (isJumpPressed && !facingWall && movement.x != 0)
+                if (isJumpPressed && !facingWall())
                 {
                     rb.constraints = RigidbodyConstraints2D.None;
                     jump();
                 }
+
+             
             }
             else
             {
                 rb.constraints = RigidbodyConstraints2D.None;
             }
+        }
+        else
+        {
+            rb.constraints = RigidbodyConstraints2D.None;
         }
     }
     private void handleDash(int dir)
