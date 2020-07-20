@@ -641,9 +641,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1375680033}
   - component: {fileID: 1375680032}
+  - component: {fileID: 1375680034}
   - component: {fileID: 1375680031}
   - component: {fileID: 1375680030}
-  - component: {fileID: 1375680034}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -776,10 +776,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af81354c3ba806f498b77befd841a434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  jumpHeight: 15
   fallMult: -2
-  dashDis: 3
+  playerData: {fileID: 11400000, guid: dc119ab4fa2962e4d820d5446f4e2aac, type: 2}
   platformLayerMask:
     serializedVersion: 2
     m_Bits: 256
