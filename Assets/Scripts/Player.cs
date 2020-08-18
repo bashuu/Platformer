@@ -57,13 +57,20 @@ public class Player : MonoBehaviour
 
     public void dash(float distance)
     {
+        playerData.stamina -= playerData.dashCost;
         transform.position += new Vector3(playerData.lastMoveDir, 0, 0) * distance;
     }
 
     public void jump()
     {
         rb.velocity = Vector2.up * playerData.jumpHeight;
-        playerData.jumpCount--;
+        playerData.stamina -= playerData.jumpCost;
+    }
+
+    public void airJump()
+    {
+        rb.velocity = Vector2.up * playerData.jumpHeight;
+        playerData.stamina -= playerData.airJumpCost;
     }
 
     public void wallJump()

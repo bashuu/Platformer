@@ -15,5 +15,17 @@ MonoBehaviour:
   moveSpeed: 5
   jumpHeight: 15
   dashDis: 3
-  lastMoveDir: 1
   MaxAirJump: 3
+  maxDash: 2
+  isJumpPressed: 0
+  isDashPressed: 0
+  isCtrlPressed: 0
+  jumpCount: 3
+  lastMoveDir: 1
+  maxStamina: 50
+  stamina: 5.240023
+  staminaRegen: 5
+  jumpCost: 10
+  airJumpCost: 15
+  dashCost: 10
+  movement: {x: 0, y: 0}
