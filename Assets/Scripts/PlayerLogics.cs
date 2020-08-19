@@ -13,6 +13,7 @@ public class PlayerLogics : MonoBehaviour
     public LayerMask enemyLayerMask;
     public bool onGround;
     public bool onWall;
+    public Player player;
 
 
     private void Awake()
@@ -25,6 +26,7 @@ public class PlayerLogics : MonoBehaviour
         Debug.Log(playerData.stamina);
         onGround = this.GetComponent<Player>().isGrounded();
         onWall = this.GetComponent<Player>().onWall();
+        player = this.GetComponent<Player>();
     }
     private void FixedUpdate()
     {
@@ -36,7 +38,12 @@ public class PlayerLogics : MonoBehaviour
         rb.velocity = playerData.movement * playerData.moveSpeed + new Vector2(0.0f, rb.velocity.y);
     }
 
-
+    bool checkIdle()
+    {
+        if (playerData.movement.x == 0 && onGround)
+            return true;
+        return false;
+    }
     private void handleJump()
     {
 
@@ -45,7 +52,7 @@ public class PlayerLogics : MonoBehaviour
             if (playerData.isJumpPressed && playerData.stamina >= playerData.jumpCost)
             {
                 if (!onWall)
-                    this.GetComponent<Player>().jump();
+                    player.jump();
             }
             return;
         }
@@ -54,7 +61,7 @@ public class PlayerLogics : MonoBehaviour
             if (playerData.isJumpPressed && playerData.stamina >= playerData.airJumpCost)
             {
                 if (!onWall)
-                    this.GetComponent<Player>().airJump();
+                    player.airJump();
             }
         }
 
@@ -71,7 +78,7 @@ public class PlayerLogics : MonoBehaviour
                 if (playerData.isJumpPressed && !this.GetComponent<Player>().facingWall() && playerData.stamina >= playerData.jumpCost)
                 {
                     rb.constraints = RigidbodyConstraints2D.None;
-                    this.GetComponent<Player>().jump();
+                    player.jump();
                 }
 
 
@@ -124,6 +131,10 @@ public class PlayerLogics : MonoBehaviour
             if (onWall)
             {
                 playerData.stamina -= playerData.wallStickCost * Time.deltaTime;
+            }
+            else if(checkIdle())
+            {
+                playerData.stamina += playerData.idleStaminaRegen * Time.deltaTime;
             }
             else
             {

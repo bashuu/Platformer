@@ -11,7 +11,6 @@ public class Player : MonoBehaviour
     [SerializeField] 
     private PlayerData playerData;
     public LayerMask platformLayerMask;
-    public StaminaBar staminaBar;
 
     private void Awake()
     {
@@ -19,18 +18,12 @@ public class Player : MonoBehaviour
         Physics2D.queriesStartInColliders = false;
     }
 
-    private void Start()
-    {
-        playerData.stamina = playerData.maxStamina;
-        staminaBar.setMaxStamina(playerData.maxStamina);
-    }
 
     private void Update()
     {
         changeDir(playerData.lastMoveDir);
 
         handleMovementInput();
-        staminaBar.setStamina(playerData.stamina);
     }
 
     public bool onEnemy()
