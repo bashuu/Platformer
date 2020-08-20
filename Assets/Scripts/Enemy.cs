@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField]
-    ParticleSystem deathPartical;
 
     private void Awake()
     {
     }
 
-    public void onDeath()
+
+    public void killEnemy()
     {
-        Debug.Log("dead");
-        
+        Debug.Log("ded");
+        Destroy(gameObject);
     }
     
 }
