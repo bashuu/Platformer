@@ -11,15 +11,11 @@ public class Player : MonoBehaviour
     [SerializeField] 
     private PlayerData playerData;
     public LayerMask platformLayerMask;
-    private GroundCheck groundCheck;
-    private WallCheck wallCheck;
 
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody2D>();
         Physics2D.queriesStartInColliders = false;
-        groundCheck = transform.Find("GroundCheck").GetComponent<GroundCheck>();
-        wallCheck = transform.Find("WallCheck").GetComponent<WallCheck>();
     }
 
 
@@ -32,22 +28,16 @@ public class Player : MonoBehaviour
 
     public bool onEnemy()
     {
-        return groundCheck.onEnemy;
+        return transform.Find("GroundCheck").GetComponent<GroundCheck>().onEnemy;
     }
     public bool isGrounded()
     {
-        return groundCheck.isGrounded;
-    }
-    public bool checkIdle()
-    {
-        if (playerData.movement.x == 0 && isGrounded())
-            return true;
-        return false;
+        return transform.Find("GroundCheck").GetComponent<GroundCheck>().isGrounded;
     }
 
     public bool onWall()
     {
-        if (wallCheck.onWall && !isGrounded())
+        if (transform.Find("WallCheck").GetComponent<WallCheck>().onWall && !isGrounded())
         {
             return true;
         }
@@ -127,6 +117,7 @@ public class Player : MonoBehaviour
         playerData.isJumpPressed = Input.GetKeyDown(KeyCode.Space);
 
         playerData.isDashPressed = Input.GetKeyDown(KeyCode.LeftShift);
+
 
         playerData.isCtrlPressed = Input.GetKey(KeyCode.LeftControl);
     }

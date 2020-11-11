@@ -19,13 +19,14 @@ public class PlayerLogics : MonoBehaviour
     private void Awake()
     {
         rb = this.GetComponent<Rigidbody2D>();
-        player = this.GetComponent<Player>();
     }
 
     private void Update()
     {
-        onWall = player.onWall();
-        onGround = player.isGrounded();
+        Debug.Log(playerData.stamina);
+        onGround = this.GetComponent<Player>().isGrounded();
+        onWall = this.GetComponent<Player>().onWall();
+        player = this.GetComponent<Player>();
     }
     private void FixedUpdate()
     {
@@ -37,6 +38,12 @@ public class PlayerLogics : MonoBehaviour
         rb.velocity = playerData.movement * playerData.moveSpeed + new Vector2(0.0f, rb.velocity.y);
     }
 
+    bool checkIdle()
+    {
+        if (playerData.movement.x == 0 && onGround)
+            return true;
+        return false;
+    }
     private void handleJump()
     {
 
@@ -47,6 +54,7 @@ public class PlayerLogics : MonoBehaviour
                 if (!onWall)
                     player.jump();
             }
+            return;
         }
         else
         {
@@ -60,7 +68,6 @@ public class PlayerLogics : MonoBehaviour
     }
     private void handleWalljump()
     {
-       //    if(!playerData.isCtrlPressed && onWall && rb.)
 
         if (playerData.isCtrlPressed && playerData.stamina > 0)
         {
@@ -68,7 +75,7 @@ public class PlayerLogics : MonoBehaviour
             {
                 rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
-                if (playerData.isJumpPressed && !player.facingWall() && playerData.stamina >= playerData.jumpCost)
+                if (playerData.isJumpPressed && !this.GetComponent<Player>().facingWall() && playerData.stamina >= playerData.jumpCost)
                 {
                     rb.constraints = RigidbodyConstraints2D.None;
                     player.jump();
@@ -97,19 +104,22 @@ public class PlayerLogics : MonoBehaviour
             if (hitPlatform.collider != null)
             {
                 float distance = Mathf.Abs(hitPlatform.point.x - transform.position.x);
-                player.dash(distance - 0.2f);
+                this.GetComponent<Player>().dash(distance - 0.2f);
                 return;
             }
 
             if (hitEnemy.collider != null)
             {
+                Debug.Log("Kill");
                 float distance = Mathf.Abs(hitEnemy.point.x - transform.position.x);
-                player.dash(distance);
-                hitEnemy.collider.gameObject.GetComponent<Enemy>().killEnemy();
+                this.GetComponent<Player>().dash(distance);
+                hitEnemy.collider.gameObject.GetComponent<Enemy>().onDeath();
+                Destroy(hitEnemy.collider.gameObject, 1f);
+
                 return;
             }
 
-            player.dash(playerData.dashDis);
+            this.GetComponent<Player>().dash(playerData.dashDis);
         }
 
     }
@@ -122,11 +132,11 @@ public class PlayerLogics : MonoBehaviour
             {
                 playerData.stamina -= playerData.wallStickCost * Time.deltaTime;
             }
-            else if(player.checkIdle())
+            else if(checkIdle())
             {
                 playerData.stamina += playerData.idleStaminaRegen * Time.deltaTime;
             }
-            else if(onGround)
+            else
             {
                 playerData.stamina += playerData.staminaRegen * Time.deltaTime;
             }

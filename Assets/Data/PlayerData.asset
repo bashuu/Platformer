@@ -15,17 +15,19 @@ MonoBehaviour:
   moveSpeed: 5
   jumpHeight: 15
   dashDis: 3
+  MaxAirJump: 3
+  maxDash: 2
   isJumpPressed: 0
   isDashPressed: 0
   isCtrlPressed: 0
   jumpCount: 3
   lastMoveDir: -1
   maxStamina: 50
-  stamina: 50.800026
+  stamina: 14.400053
   staminaRegen: 10
-  idleStaminaRegen: 25
+  idleStaminaRegen: 20
   jumpCost: 10
-  airJumpCost: 25
+  airJumpCost: 15
   dashCost: 10
   wallStickCost: 2
   movement: {x: 0, y: 0}
